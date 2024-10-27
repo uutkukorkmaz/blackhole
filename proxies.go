@@ -1,4 +1,4 @@
-package definitions
+package blackhole
 
 func stringColumn(name string, length int) *Column {
 	return NewColumn(name, ColumnTypeVarchar, length)

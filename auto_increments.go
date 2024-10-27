@@ -1,4 +1,4 @@
-package definitions
+package blackhole
 
 type AutoIncrements struct{ Definition }
 

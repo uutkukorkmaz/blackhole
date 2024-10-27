@@ -1,4 +1,4 @@
-package definitions
+package blackhole
 
 type Nullable struct {
 	Definition

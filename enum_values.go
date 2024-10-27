@@ -1,4 +1,4 @@
-package definitions
+package blackhole
 
 type EnumValues struct {
 	Definition

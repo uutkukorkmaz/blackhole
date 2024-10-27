@@ -1,4 +1,4 @@
-package definitions
+package blackhole
 
 // Blueprint represents a blueprint for defining database tables or modifying them.
 type Blueprint struct {

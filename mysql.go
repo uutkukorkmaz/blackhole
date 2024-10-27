@@ -1,15 +1,15 @@
-package grammars
+package blackhole
 
 import (
 	"fmt"
-	def "github.com/uutkukorkmaz/blackhole/internal/definitions"
+
 	"reflect"
 	"strconv"
 	"strings"
 )
 
 type MySqlGrammar struct {
-	def.BaseGrammar
+	baseGrammar
 }
 
 func NewMySqlGrammar() *MySqlGrammar {
@@ -27,12 +27,12 @@ func (m *MySqlGrammar) GetDateFormat() string {
 }
 
 // CompileAutoIncrement returns the auto-increment SQL for MySQL.
-func (m *MySqlGrammar) CompileAutoIncrement(a *def.AutoIncrements) (string, error) {
+func (m *MySqlGrammar) CompileAutoIncrement(a *AutoIncrements) (string, error) {
 	return "auto_increment", nil
 }
 
 // CompileNullable returns the nullable SQL for MySQL.
-func (m *MySqlGrammar) CompileNullable(n *def.Nullable) (string, error) {
+func (m *MySqlGrammar) CompileNullable(n *Nullable) (string, error) {
 	if n.Is() {
 		return "null", nil
 	}
@@ -40,18 +40,18 @@ func (m *MySqlGrammar) CompileNullable(n *def.Nullable) (string, error) {
 }
 
 // CompileDefaultValue returns the default value SQL for MySQL.
-func (m *MySqlGrammar) CompileDefaultValue(d *def.DefaultValue) (string, error) {
+func (m *MySqlGrammar) CompileDefaultValue(d *DefaultValue) (string, error) {
 	return d.Get(), nil
 }
 
 // CompileComment returns the comment SQL for MySQL.
-func (m *MySqlGrammar) CompileComment(c *def.Comment) (string, error) {
+func (m *MySqlGrammar) CompileComment(c *Comment) (string, error) {
 	return fmt.Sprintf("'%s'", c.Get()), nil
 }
 
 // CompileColumn returns the column SQL for MySQL.
 // It compiles various attributes of the column, such as name, data type, length, nullability, etc.
-func (m *MySqlGrammar) CompileColumn(c *def.Column) (string, error) {
+func (m *MySqlGrammar) CompileColumn(c *Column) (string, error) {
 	var result string
 	dataTypeString := string(c.GetDataType())
 
@@ -126,7 +126,7 @@ func (m *MySqlGrammar) CompileColumn(c *def.Column) (string, error) {
 
 // Build returns the final runnable SQL for MySQL.
 // It constructs the SQL statement based on the blueprint mode (create, drop, alter).
-func (m *MySqlGrammar) Build(b *def.Blueprint) (string, error) {
+func (m *MySqlGrammar) Build(b *Blueprint) (string, error) {
 	var sql string
 	modeDirective := m.getDirective(b.Mode())
 	sql = fmt.Sprintf("%s `%s`", modeDirective, b.GetTable())
@@ -152,7 +152,7 @@ func (m *MySqlGrammar) getDirective(mode string) string {
 }
 
 // callCompileFunctionsByMode compiles the SQL statement based on the blueprint mode.
-func (m *MySqlGrammar) callCompileFunctionsByMode(b *def.Blueprint) (string, error) {
+func (m *MySqlGrammar) callCompileFunctionsByMode(b *Blueprint) (string, error) {
 	var sql string
 	switch b.Mode() {
 	case "create":
@@ -179,7 +179,7 @@ func (m *MySqlGrammar) callCompileFunctionsByMode(b *def.Blueprint) (string, err
 
 // CompileCreateTable returns the SQL for creating a table in MySQL.
 // It iterates over the definitions in the blueprint to build the table schema.
-func (m *MySqlGrammar) CompileCreateTable(b def.Blueprint) (string, error) {
+func (m *MySqlGrammar) CompileCreateTable(b Blueprint) (string, error) {
 	var sql string
 	sql = "("
 	for _, c := range b.Definitions() {
@@ -208,13 +208,13 @@ func (m *MySqlGrammar) CompileCreateTable(b def.Blueprint) (string, error) {
 }
 
 // CompileDropTable returns the SQL for dropping a table in MySQL.
-func (m *MySqlGrammar) CompileDropTable(table def.Blueprint) (string, error) {
+func (m *MySqlGrammar) CompileDropTable(table Blueprint) (string, error) {
 	return "", nil
 }
 
 // CompileAlterTable returns the SQL for altering a table in MySQL.
 // It handles adding new columns or modifying existing columns.
-func (m *MySqlGrammar) CompileAlterTable(table def.Blueprint) (string, error) {
+func (m *MySqlGrammar) CompileAlterTable(table Blueprint) (string, error) {
 	var sql string
 	alterDirective := m.getDirective("alter")
 	for i, c := range table.Definitions() {
@@ -227,7 +227,7 @@ func (m *MySqlGrammar) CompileAlterTable(table def.Blueprint) (string, error) {
 		}
 
 		// Handle column addition specifically
-		if reflect.TypeOf(c) == reflect.TypeOf(&def.Column{}) {
+		if reflect.TypeOf(c) == reflect.TypeOf(&Column{}) {
 			sql += " add " + expression + ";\n"
 			continue
 		}
@@ -251,7 +251,7 @@ func (m *MySqlGrammar) CompileAlterTable(table def.Blueprint) (string, error) {
 
 // CompileEnumValues returns the SQL for enum values in MySQL.
 // It constructs the enum values as a comma-separated list.
-func (m *MySqlGrammar) CompileEnumValues(e *def.EnumValues) (string, error) {
+func (m *MySqlGrammar) CompileEnumValues(e *EnumValues) (string, error) {
 	var sql string
 	sql = "enum("
 	for _, v := range e.Values {
@@ -276,12 +276,12 @@ func (m *MySqlGrammar) CompileDropDatabase(database string) (string, error) {
 
 // CompileIndex returns the SQL for creating an index in MySQL.
 // It constructs the index name and optionally specifies the algorithm to use.
-func (m *MySqlGrammar) CompileIndex(i *def.Index) (string, error) {
+func (m *MySqlGrammar) CompileIndex(i *Index) (string, error) {
 	var sql string
 	columnsForName := strings.ReplaceAll(strings.Replace(i.ColumnsString(), ",", "_", -1), "`", "")
 	indexName := strings.TrimRight(fmt.Sprintf("%s_%s_%s", i.Table, columnsForName, i.Type), "_")
 	using := ""
-	if i.Algorithm != def.IndexAlgorithmDefault {
+	if i.Algorithm != IndexAlgorithmDefault {
 		using = fmt.Sprintf(" using %s", i.Algorithm)
 	}
 	sql = fmt.Sprintf(" add %s `%s`(%s)%s;", i.Type, indexName, i.ColumnsString(), using)
@@ -290,7 +290,7 @@ func (m *MySqlGrammar) CompileIndex(i *def.Index) (string, error) {
 
 // CompileForeignKey returns the SQL for creating a foreign key in MySQL.
 // It ensures that both referenced column and table are specified.
-func (m *MySqlGrammar) CompileForeignKey(f *def.ForeignKey) (string, error) {
+func (m *MySqlGrammar) CompileForeignKey(f *ForeignKey) (string, error) {
 	var sql string
 	name := fmt.Sprintf("%s_%s_foreign", f.GetTable(), f.GetColumn())
 	if f.ReferencedColumn() == "" || f.ReferencedTable() == "" {
@@ -309,7 +309,7 @@ func (m *MySqlGrammar) CompileForeignKey(f *def.ForeignKey) (string, error) {
 
 // CompileRenameColumn returns the SQL for renaming a column in MySQL.
 // It generates the SQL statement to rename a column from one name to another.
-func (m *MySqlGrammar) CompileRenameColumn(r *def.RenameColumn) (string, error) {
+func (m *MySqlGrammar) CompileRenameColumn(r *RenameColumn) (string, error) {
 	return fmt.Sprintf(" rename column `%s` to `%s`;", r.From(), r.To()), nil
 }
 

@@ -1,4 +1,4 @@
-package definitions
+package blackhole
 
 type DropColumn struct {
 	Definition

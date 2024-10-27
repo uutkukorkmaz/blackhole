@@ -1,4 +1,4 @@
-package definitions
+package blackhole
 
 // ColumnType represents the type of a column in a database table.
 type ColumnType string

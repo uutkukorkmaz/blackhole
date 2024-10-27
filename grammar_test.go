@@ -1,4 +1,4 @@
-package definitions
+package blackhole
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 type dummyGrammar struct {
-	BaseGrammar
+	baseGrammar
 }
 
 // CompileCreateDatabase provides a dummy implementation for creating a database.

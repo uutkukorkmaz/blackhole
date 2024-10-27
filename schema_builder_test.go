@@ -1,14 +1,13 @@
 package blackhole
 
 import (
-	"github.com/uutkukorkmaz/blackhole/internal/definitions"
 	"testing"
 )
 
 func TestMySQLGrammar(t *testing.T) {
 	schema := NewSchema(MySQL)
 
-	schema.Create("builder_test", func(table *definitions.Blueprint) {
+	schema.Create("builder_test", func(table *Blueprint) {
 		table.Id()
 
 		table.String("test_string_column", 255).
@@ -17,7 +16,7 @@ func TestMySQLGrammar(t *testing.T) {
 
 		table.String("test_default", 255).
 			Default("default_value").
-			IndexUsing(definitions.IndexAlgorithmBTree)
+			IndexUsing(IndexAlgorithmBTree)
 
 		table.Enum("test_enum", []string{"a", "b", "c"}).
 			Default("a")
@@ -43,22 +42,22 @@ func TestMySQLGrammar(t *testing.T) {
 func TestSchema_Create_WithMySQLGrammar(t *testing.T) {
 	var cases = []struct {
 		name     string
-		callback func(*definitions.Blueprint)
+		callback func(*Blueprint)
 		expected string
 	}{
 		{
 			name: "users",
-			callback: func(bp *definitions.Blueprint) {
+			callback: func(bp *Blueprint) {
 				bp.Id()
 				bp.String("username", 255).NotNull().Unique()
 				bp.String("password", 255).NotNull()
-				bp.Int("age").IndexUsing(definitions.IndexAlgorithmBTree)
+				bp.Int("age").IndexUsing(IndexAlgorithmBTree)
 			},
 			expected: "create table if not exists `users`(`id` bigint unsigned not null auto_increment primary key,`username` varchar(255) not null,`password` varchar(255) not null,`age` integer(11)) default character set utf8mb4 collate 'utf8mb4_unicode_ci';\nalter table `users` add unique `users_username_unique`(`username`);\nalter table `users` add index `users_age_index`(`age`) using btree;",
 		},
 		{
 			name: "posts",
-			callback: func(bp *definitions.Blueprint) {
+			callback: func(bp *Blueprint) {
 				bp.Id()
 				bp.String("title", 255).NotNull()
 				foreign, userId := bp.ForeignId("user_id")
@@ -69,7 +68,7 @@ func TestSchema_Create_WithMySQLGrammar(t *testing.T) {
 		},
 		{
 			name: "posts",
-			callback: func(bp *definitions.Blueprint) {
+			callback: func(bp *Blueprint) {
 				bp.Id()
 				bp.String("title", 255).NotNull()
 				foreign, userId := bp.ForeignId("user_id")
@@ -102,12 +101,12 @@ func TestSchema_Create_WithMySQLGrammar(t *testing.T) {
 func TestSchema_Alter_WithMySQLGrammar(t *testing.T) {
 	var cases = []struct {
 		name     string
-		callback func(*definitions.Blueprint)
+		callback func(*Blueprint)
 		expected string
 	}{
 		{
 			name: "users",
-			callback: func(bp *definitions.Blueprint) {
+			callback: func(bp *Blueprint) {
 				bp.Timestamps()
 				bp.RenameColumn("name", "full_name")
 				bp.DropColumn("users", "email")

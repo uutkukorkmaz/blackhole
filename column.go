@@ -1,4 +1,4 @@
-package definitions
+package blackhole
 
 // Column represents a database column with various attributes such as type, length, precision, etc.
 type Column struct {

@@ -1,4 +1,4 @@
-package definitions
+package blackhole
 
 import (
 	"github.com/gertd/go-pluralize"
