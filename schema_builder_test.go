@@ -1,7 +1,7 @@
 package blackhole
 
 import (
-	"blackhole/internal/definitions"
+	"github.com/uutkukorkmaz/blackhole/internal/definitions"
 	"testing"
 )
 
