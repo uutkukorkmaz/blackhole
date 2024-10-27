@@ -35,6 +35,11 @@ func (i *Index) ColumnsString() string {
 	return strings.Join(s, ", ")
 }
 
+func (i *Index) Using(algorithm IndexAlgorithm) *Index {
+	i.Algorithm = algorithm
+	return i
+}
+
 func (i *Index) Expression(grammar Grammar) (string, error) {
 	return grammar.CompileIndex(i)
 }

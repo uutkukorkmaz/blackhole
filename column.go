@@ -244,6 +244,28 @@ func (c *Column) IndexUsing(algorithm IndexAlgorithm) *Column {
 	return c
 }
 
+// UniqueUsing adds a unique index to the column using the specified algorithm.
+func (c *Column) UniqueUsing(algorithm IndexAlgorithm) *Column {
+	index := &Index{
+		Type:  IndexTypeUnique,
+		Table: c.blueprint.GetTable(),
+		Columns: []string{
+			c.name,
+		},
+		Algorithm: algorithm,
+	}
+	c.blueprint.AddChild(&Blueprint{
+		table:   c.blueprint.GetTable(),
+		grammar: c.blueprint.grammar,
+		mode:    "alter",
+		definitions: []Definition{
+			index,
+		},
+	})
+
+	return c
+}
+
 // AddComment adds a comment to the column.
 func (c *Column) AddComment(comment string) *Column {
 	c.comment = NewComment(comment)

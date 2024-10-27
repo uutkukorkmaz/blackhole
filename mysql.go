@@ -278,8 +278,8 @@ func (m *MySqlGrammar) CompileDropDatabase(database string) (string, error) {
 // It constructs the index name and optionally specifies the algorithm to use.
 func (m *MySqlGrammar) CompileIndex(i *Index) (string, error) {
 	var sql string
-	columnsForName := strings.ReplaceAll(strings.Replace(i.ColumnsString(), ",", "_", -1), "`", "")
-	indexName := strings.TrimRight(fmt.Sprintf("%s_%s_%s", i.Table, columnsForName, i.Type), "_")
+	columnsForName := strings.Join(i.Columns, "_")
+	indexName := strings.TrimRight(fmt.Sprintf("%s_%s_%s", strings.Trim(i.Table, " "), strings.ReplaceAll(columnsForName, " ", "_"), i.Type), "_")
 	using := ""
 	if i.Algorithm != IndexAlgorithmDefault {
 		using = fmt.Sprintf(" using %s", i.Algorithm)

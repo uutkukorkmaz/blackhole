@@ -219,6 +219,28 @@ func (b *Blueprint) AddIndex(index *Index) {
 	b.definitions = append(b.definitions, index)
 }
 
+// IndexColumn adds an index to the blueprint.
+func (b *Blueprint) IndexColumn(column string) *Index {
+	index := &Index{
+		Type:    IndexTypeIndex,
+		Table:   b.GetTable(),
+		Columns: []string{column},
+	}
+	b.AddIndex(index)
+	return index
+}
+
+// IndexColumns adds a multi-column index to the blueprint.
+func (b *Blueprint) IndexColumns(columns ...string) *Index {
+	index := &Index{
+		Type:    IndexTypeIndex,
+		Table:   b.GetTable(),
+		Columns: columns,
+	}
+	b.AddIndex(index)
+	return index
+}
+
 // Collate sets the collation for the blueprint.
 func (b *Blueprint) Collate(collate string) {
 	b.collate = collate
