@@ -32,6 +32,13 @@ func (s *Schema) Alter(name string, callback func(*Blueprint)) *Schema {
 	return s
 }
 
+// Drop an existing table on the schema.
+func (s *Schema) Drop(name string) *Schema {
+	bp := s.addNewBlueprint(name)
+	bp.Drop(func(blueprint *Blueprint) {})
+	return s
+}
+
 func (s *Schema) addNewBlueprint(table string) *Blueprint {
 	bp := NewBlueprint(table)
 	bp.Grammar(&s.grammar)

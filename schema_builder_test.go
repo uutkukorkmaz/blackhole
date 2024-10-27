@@ -132,3 +132,32 @@ func TestSchema_Alter_WithMySQLGrammar(t *testing.T) {
 		})
 	}
 }
+
+func TestSchema_Drop_WithMySQLGrammar(t *testing.T) {
+	var cases = []struct {
+		name     string
+		expected string
+	}{
+		{
+			name:     "users",
+			expected: "drop table if exists `users`;",
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			schema := NewSchema(MySQL)
+			schema.Drop(c.name)
+			generatedSQL, err := schema.Build()
+
+			if err != nil {
+				t.Errorf("Error: %s", err)
+			}
+
+			if generatedSQL != c.expected {
+				t.Errorf("Expected: %s", c.expected)
+				t.Errorf("Got: %s", generatedSQL)
+			}
+		})
+	}
+}
