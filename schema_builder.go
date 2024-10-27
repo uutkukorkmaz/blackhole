@@ -1,8 +1,8 @@
 package blackhole
 
 import (
-	"blackhole/internal/definitions"
-	"blackhole/internal/definitions/grammars"
+	"github.com/uutkukorkmaz/blackhole/internal/definitions"
+	"github.com/uutkukorkmaz/blackhole/internal/definitions/grammars"
 	"strings"
 )
 

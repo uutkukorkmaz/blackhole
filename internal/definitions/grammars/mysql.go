@@ -1,8 +1,8 @@
 package grammars
 
 import (
-	def "blackhole/internal/definitions"
 	"fmt"
+	def "github.com/uutkukorkmaz/blackhole/internal/definitions"
 	"reflect"
 	"strconv"
 	"strings"
